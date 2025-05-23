@@ -1,0 +1,32 @@
+
+# What This Compose File Does:
+# Builds a Docker image with Spark and your Python code.
+
+# Mounts your local code directory (./app) into the container so changes are reflected live.
+
+# Runs your PySpark script (job.py) using spark-submit in local (client) mode.
+
+# Isolated Network spark-net ensures future containers (e.g., Jupyter or Spark Worker nodes) can communicate with Spark.
+
+services:
+  spark:
+    build: .     # Builds the Docker image using the Dockerfile in the current directory.
+    container_name: pyspark-app  # Sets a custom name for the container.
+
+    ports:
+      - "4040:4040"  # Expose Spark Web UI (shows jobs, stages, DAGs)
+
+    volumes:
+      - ./app:/opt/app  # Mounts the local "app" folder to "/opt/app" inside the container.
+                         # This makes your job.py editable locally and accessible in the container.
+
+    environment:
+      - SPARK_MODE=client  # Environment variable used by the Bitnami Spark image.
+                           # "client" mode means Spark runs locally, not as a cluster.
+
+    networks:
+      - spark-net  # Connects this service to a custom user-defined Docker network.
+
+networks:
+  spark-net:  # Defines the custom Docker network named "spark-net".
+              # Useful if you want to scale this setup later with Spark Master/Worker or add other services (like Jupyter, Kafka, HDFS).

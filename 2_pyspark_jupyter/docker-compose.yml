@@ -1,0 +1,29 @@
+services:
+  spark:
+    build: .  # Uses the Dockerfile in the current directory to build the image.
+    container_name: pyspark-notebook  # Assigns a custom name to the container.
+
+    ports:
+      - "4040:4040"  # Maps Spark UI port (inside container) to localhost:4040
+                     # Allows viewing Spark jobs and DAGs in your browser
+      - "8888:8888"  # Maps Jupyter Notebook port to localhost:8888
+                     # So you can open the notebook interface in your browser
+
+    volumes:
+      - ./notebooks:/app/notebooks  
+        # Mounts the local "notebooks" directory into the container's /app/notebooks
+        # This lets you edit notebooks on your host machine and run them in the container
+
+    environment:
+      - SPARK_MODE=client  
+        # Tells the Bitnami Spark image to run in local "client" mode (not as part of a cluster)
+
+    networks:
+      - spark-net  
+        # Connects this container to a custom Docker network
+        # This is helpful if you want to scale the setup later (e.g., with Spark master/workers, Hadoop, or Kafka)
+
+networks:
+  spark-net:  
+    # Defines the custom Docker network named "spark-net"
+    # Useful for container-to-container communication

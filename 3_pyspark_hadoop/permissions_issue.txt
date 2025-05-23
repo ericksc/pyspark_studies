@@ -1,0 +1,22 @@
+To interact with HDFS (and fix the permissions issue), you need to use HDFS CLI commands, not Unix file commands like cd or ls.
+
+What You Need to Do Instead
+Run these HDFS commands inside the NameNode container:
+
+1. Enter the NameNode container
+
+docker exec -it namenode bash
+
+2. Run HDFS commands
+
+Create the HDFS directory:
+
+hdfs dfs -mkdir -p /user/jovyan
+
+Set ownership to the jovyan user (used by Jupyter)
+
+hdfs dfs -chown jovyan /user/jovyan
+
+3. (Optional) Check permissions
+
+hdfs dfs -ls /user
